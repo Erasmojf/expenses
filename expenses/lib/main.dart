@@ -1,5 +1,6 @@
 import 'package:expenses/transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 void main() => runApp(ExpensesApp());
 
@@ -11,6 +12,9 @@ class ExpensesApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
+  final titleController = TextEditingController();
+  final valueController = TextEditingController();
+
   final _transaction = [
     Transaction(
       id: "t1",
@@ -33,7 +37,6 @@ class MyHomePage extends StatelessWidget {
         title: Text("Pesonal Expenses"),
       ),
       body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Container(
@@ -58,7 +61,7 @@ class MyHomePage extends StatelessWidget {
                         )),
                         padding: EdgeInsets.all(10),
                         child: Text(
-                          tr.value.toString(),
+                          "R\$ ${tr.value.toStringAsFixed(2)}",
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -74,7 +77,7 @@ class MyHomePage extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               )),
                           Text(
-                            tr.date.toString(),
+                            DateFormat('d MMM y').format(tr.date),
                             style: TextStyle(color: Colors.grey),
                           ),
                         ],
@@ -83,7 +86,34 @@ class MyHomePage extends StatelessWidget {
                   ),
                 );
               }).toList(),
-            )
+            ),
+            Card(
+              elevation: 5,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(children: [
+                  TextField(
+                    controller: titleController,
+                    decoration: InputDecoration(labelText: "Title"),
+                  ),
+                  TextField(
+                    controller: valueController,
+                    decoration: InputDecoration(labelText: "Value (R\$)"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      print(titleController.text);
+                      print(valueController.text);
+                    },
+                    child: Text("New Transaction"),
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      primary: Colors.white,
+                    ),
+                  )
+                ]),
+              ),
+            ),
           ]),
     );
   }

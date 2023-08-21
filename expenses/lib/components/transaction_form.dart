@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class TransactionForm extends StatefulWidget {
   final void Function(String, double) onSubmit;
 
-  TransactionForm(this.onSubmit);
+  const TransactionForm(this.onSubmit, {Key? key}) : super(key: key);
 
   @override
   State<TransactionForm> createState() => _TransactionFormState();
@@ -16,10 +16,12 @@ class _TransactionFormState extends State<TransactionForm> {
 
   _submitForm() {
     final title = titleController.text;
-    final value = double.tryParse(valueController.text) ?? 0.0;
+    final value = double.tryParse(valueController.text) ?? 0;
+
     if (title.isEmpty || value <= 0) {
       return;
     }
+
     widget.onSubmit(title, value);
   }
 
@@ -29,25 +31,40 @@ class _TransactionFormState extends State<TransactionForm> {
       elevation: 5,
       child: Padding(
         padding: const EdgeInsets.all(10),
-        child: Column(children: [
-          TextField(
-            controller: titleController,
-            decoration: InputDecoration(labelText: "Title"),
-          ),
-          TextField(
-            controller: valueController,
-            decoration: InputDecoration(labelText: "Value (R\$)"),
-          ),
-          TextButton(
-            child: Text("New Transaction"),
-            style: TextButton.styleFrom(primary: Colors.purple),
-            onPressed: () {
-              final title = titleController.text;
-              final value = double.tryParse(valueController.text) ?? 0.0;
-              widget.onSubmit(title, value);
-            },
-          )
-        ]),
+        child: Column(
+          children: [
+            TextField(
+              controller: titleController,
+              onSubmitted: (_) => _submitForm(),
+              decoration: const InputDecoration(
+                labelText: 'Título',
+              ),
+            ),
+            TextField(
+              controller: valueController,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              onSubmitted: (_) => _submitForm(),
+              decoration: const InputDecoration(
+                labelText: 'Valor (R\$)',
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                TextButton(
+                  child: const Text(
+                    'Nova Transação',
+                    style: TextStyle(
+                      color: Colors.purple,
+                    ),
+                  ),
+                  onPressed: _submitForm,
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
